@@ -1,0 +1,75 @@
+# API de Gestión de Citas Médicas
+
+Este proyecto es una API desarrollada con FastAPI para la gestión de citas médicas en un hospital. Permite el registro y autenticación de usuarios, agendar, consultar, editar y cancelar citas, así como administración de usuarios y citas por parte de administradores.
+
+## Características
+
+- Registro y autenticación de usuarios (paciente, doctor, admin)
+- Agendar, consultar, editar y cancelar citas médicas
+- Administración de usuarios y citas (solo admin)
+- Seguridad con JWT y roles
+- Base de datos PostgreSQL
+- Docker y Docker Compose para despliegue sencillo
+
+## Estructura del proyecto
+
+```
+.env
+docker-compose.yml
+Dockerfile
+requirements.txt
+app/
+    database.py
+    main.py
+    models/
+    routers/
+    schemas/
+    services/
+    utils/
+```
+
+## Instalación y ejecución
+
+### Requisitos
+
+- Docker y Docker Compose instalados
+
+### Pasos
+
+1. Clona el repositorio:
+   ```sh
+   git clone <URL-del-repositorio>
+   cd hospital_backend
+   ```
+
+2. Copia el archivo `.env` y configura la clave secreta:
+   ```
+   SECRET_KEY=claveromohospital
+   ```
+
+3. Levanta los servicios con Docker Compose:
+   ```sh
+   docker-compose up --build
+   ```
+
+4. La API estará disponible en [http://localhost:8000](http://localhost:8000)
+
+## Documentación de la API
+
+FastAPI genera documentación automática en:
+
+- [http://localhost:8000/docs](http://localhost:8000/docs) (Swagger UI)
+- [http://localhost:8000/redoc](http://localhost:8000/redoc) (ReDoc)
+
+## Variables de entorno
+
+- `SECRET_KEY`: Clave secreta para JWT
+- `DATABASE_URL`: URL de conexión a la base de datos PostgreSQL
+
+## Autores
+
+- Dev Daniel Rodriguez
+
+## Licencia
+
+Este proyecto está bajo la licencia MIT.
