@@ -1,6 +1,7 @@
-<h1 align="center"> API de Gestión de Citas Médicas </h1>
+##API de Gestión de Citas Médicas
 
-Este proyecto es una API desarrollada con FastAPI para la gestión de citas médicas en un hospital. Permite el registro y autenticación de usuarios, agendar, consultar, editar y cancelar citas, así como administración de usuarios y citas por parte de administradores.
+Este proyecto es una API desarrollada con FastAPI para la gestión de citas médicas en un hospital. 
+Permite el registro y autenticación de usuarios, agendar, consultar, editar y cancelar citas, así como administración de usuarios y citas por parte de administradores.
 
 ## Características
 
