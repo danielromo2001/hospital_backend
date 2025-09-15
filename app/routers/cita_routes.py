@@ -15,7 +15,7 @@ router = APIRouter(prefix="/citas", tags=["Citas"])
 
 @router.post("/", summary="Agendar una cita médica")
 def crear_cita_endpoint(cita: CitaCreate, db: Session = Depends(get_db), usuario: User = Depends(obtener_usuario_actual)):
-    nueva_cita, error = crear_cita(cita.motivo, cita.fecha_hora, usuario.id, db)
+    nueva_cita, error = crear_cita(cita.motivo, cita.fecha_hora, usuario.id, cita.notas, db)
     if error:
         raise HTTPException(status_code=400, detail=respuesta_error(error))
     return respuesta_exito("Cita agendada exitosamente", {"cita": nueva_cita.id})
