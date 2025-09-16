@@ -37,6 +37,7 @@ API REST construida con FastAPI para gestionar citas médicas: registro y autent
 - CRUD de citas médicas (crear, leer, actualizar, cancelar)
 - Administración de usuarios y citas (solo admin)
 - Seguridad con JWT, contraseñas hasheadas y control de acceso por roles
+- **Gestión inteligente de horarios**: Las citas canceladas liberan automáticamente el horario para otros pacientes
 
 ## Estructura del proyecto
 ```
@@ -100,35 +101,35 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 
 ## Endpoints reales
 
-Nota: Actualmente los routers tienen prefijos y además se montan con prefijos en `app.main`, por lo que las rutas efectivas incluyen doble prefijo. Puedes simplificar eliminando uno de los prefijos (en el router o en `include_router`).
+Con las rutas normalizadas (sin doble prefijo):
 
-| Método | Ruta                             | Descripción                               | Rol requerido |
-|--------|----------------------------------|-------------------------------------------|---------------|
-| POST   | `/auth/auth/registro`           | Registrar un nuevo usuario                | Público       |
-| POST   | `/auth/auth/login`              | Obtener token de acceso (OAuth2)         | Público       |
-| POST   | `/users/users/admin/crear`      | Crear usuario (por admin)                 | Admin         |
-| POST   | `/users/users/crear_admin`      | Crear usuario administrador               | Admin         |
-| POST   | `/citas/citas/`                 | Agendar una cita                          | Autenticado   |
-| GET    | `/citas/citas/`                 | Consultar mis citas                       | Autenticado   |
-| GET    | `/citas/citas/hoy`              | Ver mis citas de hoy                      | Autenticado   |
-| PUT    | `/citas/citas/{cita_id}`        | Editar mi cita                            | Autenticado   |
-| DELETE | `/citas/citas/{cita_id}`        | Cancelar mi propia cita                   | Autenticado   |
-| GET    | `/citas/citas/admin`            | Ver todas las citas                       | Admin         |
-| PUT    | `/citas/citas/admin/{cita_id}`  | Editar cita (admin)                       | Admin         |
-| DELETE | `/citas/citas/admin/{cita_id}`  | Eliminar una cita (admin)                 | Admin         |
+| Método | Ruta                    | Descripción                         | Rol requerido |
+|--------|-------------------------|-------------------------------------|---------------|
+| POST   | `/auth/registro`       | Registrar un nuevo usuario          | Público       |
+| POST   | `/auth/login`          | Obtener token de acceso (OAuth2)    | Público       |
+| POST   | `/users/admin/crear`   | Crear usuario (por admin)           | Admin         |
+| POST   | `/users/crear_admin`   | Crear usuario administrador         | Admin         |
+| POST   | `/citas/`              | Agendar una cita                    | Autenticado   |
+| GET    | `/citas/`              | Consultar mis citas                 | Autenticado   |
+| GET    | `/citas/hoy`           | Ver mis citas de hoy                | Autenticado   |
+| PUT    | `/citas/{cita_id}`     | Editar mi cita                      | Autenticado   |
+| DELETE | `/citas/{cita_id}`     | Cancelar mi propia cita (libera horario) | Autenticado   |
+| GET    | `/citas/admin`         | Ver todas las citas                 | Admin         |
+| PUT    | `/citas/admin/{cita_id}` | Editar cita (admin)               | Admin         |
+| DELETE | `/citas/admin/{cita_id}` | Eliminar una cita (admin)         | Admin         |
 
 ## Ejemplos de uso
 
 Autenticación (login con formulario x-www-form-urlencoded):
 ```sh
-curl -X POST http://localhost:8000/auth/auth/login \
+curl -X POST http://localhost:8000/auth/login \
   -H "Content-Type: application/x-www-form-urlencoded" \
-  -d "username=user@example.com&password=Passw0rd!"
+  -d "username=user@example.com&password=Passw0rd!" # ahora también acepta username o email
 ```
 
 Registro de usuario (JSON):
 ```sh
-curl -X POST http://localhost:8000/auth/auth/registro \
+curl -X POST http://localhost:8000/auth/registro \
   -H "Content-Type: application/json" \
   -d '{
     "username":"usuario1",
@@ -142,7 +143,7 @@ curl -X POST http://localhost:8000/auth/auth/registro \
 Crear cita (token Bearer requerido):
 ```sh
 TOKEN=eyJ... # reemplaza por tu token
-curl -X POST http://localhost:8000/citas/citas/ \
+curl -X POST http://localhost:8000/citas/ \
   -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
@@ -154,7 +155,7 @@ curl -X POST http://localhost:8000/citas/citas/ \
 
 Listar mis citas:
 ```sh
-curl -X GET http://localhost:8000/citas/citas/ \
+curl -X GET http://localhost:8000/citas/ \
   -H "Authorization: Bearer $TOKEN"
 ```
 

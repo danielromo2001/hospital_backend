@@ -62,7 +62,11 @@ def crear_cita(motivo, fecha_hora, paciente_id, notas=None, db: Session = None):
         return None, f"Error interno del servidor: {str(e)}"
 
 def obtener_citas_paciente(paciente_id, db: Session):
-    return db.query(Cita).filter(Cita.paciente_id == paciente_id).all()
+    # Solo mostrar citas activas (programadas y completadas), no canceladas
+    return db.query(Cita).filter(
+        Cita.paciente_id == paciente_id,
+        Cita.estado.in_(["programada", "completada"])
+    ).all()
 
 def obtener_todas_las_citas(db: Session):
     return db.query(Cita).all()
@@ -79,8 +83,14 @@ def eliminar_cita_paciente(cita_id, paciente_id, db: Session):
     cita = db.query(Cita).filter(Cita.id == cita_id, Cita.paciente_id == paciente_id).first()
     if not cita:
         return None, "Cita no encontrada o no te pertenece"
-    db.delete(cita)
+    
+    # En lugar de eliminar, marcar como cancelada para liberar el horario
+    cita.estado = "cancelada"
+    cita.updated_at = datetime.now(timezone.utc)
     db.commit()
+    db.refresh(cita)
+    
+    logger.info(f"Cita {cita_id} cancelada por paciente {paciente_id}. Horario liberado.")
     return cita, None
 
 def editar_cita(cita_id, datos, db: Session):
@@ -118,6 +128,7 @@ def obtener_citas_de_hoy(paciente_id, db: Session):
     citas = db.query(Cita).filter(
         Cita.paciente_id == paciente_id,
         Cita.fecha_hora >= datetime.combine(hoy, datetime.min.time(), tzinfo=timezone.utc),
-        Cita.fecha_hora <= datetime.combine(hoy, datetime.max.time(), tzinfo=timezone.utc)
+        Cita.fecha_hora <= datetime.combine(hoy, datetime.max.time(), tzinfo=timezone.utc),
+        Cita.estado.in_(["programada", "completada"])
     ).all()
     return citas

@@ -49,7 +49,8 @@ def autenticar_usuario(username, password, db: Session, verificar_contraseña):
     try:
         logger.info(f"Intento de autenticación para usuario: {username}")
         
-        usuario = db.query(User).filter(User.username == username).first()
+        # Permitir login por username o por email
+        usuario = db.query(User).filter((User.username == username) | (User.email == username)).first()
         if not usuario:
             logger.warning(f"Intento de login con usuario inexistente: {username}")
             return None, "Nombre de usuario o contraseña incorrectos"

@@ -7,7 +7,7 @@ from app.schemas.user import UserCreate, UserOut
 from app.utils.respuestas import respuesta_exito, respuesta_error
 from app.services.user_service import crear_usuario_por_admin, crear_usuario_admin
 
-router = APIRouter(prefix="/users", tags=["Users"])
+router = APIRouter(tags=["Users"])
 
 ##@router.get("/perfil", summary="Obtener perfil del usuario autenticado")
 ##def obtener_perfil(usuario: User = Depends(obtener_usuario_actual)):

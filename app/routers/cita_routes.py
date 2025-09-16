@@ -11,7 +11,7 @@ from app.services.cita_service import (
     obtener_citas_de_hoy
 )
 
-router = APIRouter(prefix="/citas", tags=["Citas"])
+router = APIRouter(tags=["Citas"])
 
 @router.post("/", summary="Agendar una cita médica")
 def crear_cita_endpoint(cita: CitaCreate, db: Session = Depends(get_db), usuario: User = Depends(obtener_usuario_actual)):

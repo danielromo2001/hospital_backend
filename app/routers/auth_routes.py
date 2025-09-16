@@ -14,7 +14,7 @@ from app.utils.logging_config import get_logger
 
 logger = get_logger("auth_routes")
 
-router = APIRouter(prefix="/auth", tags=["Autenticación"])
+router = APIRouter(tags=["Autenticación"])
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
